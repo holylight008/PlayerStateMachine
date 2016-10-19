@@ -1,0 +1,70 @@
+{
+	"groups": [
+		{
+			"keys": "description_json,bj_jpg,water_png,a1_png,a2_png,a3_png,a4_png,b1_png,b2_png,b3_png,b4_png,b5_png",
+			"name": "preload"
+		}
+	],
+	"resources": [
+		{
+			"name": "description_json",
+			"type": "json",
+			"url": "config/description.json"
+		},
+		{
+			"name": "bj_jpg",
+			"type": "image",
+			"url": "assets/bj.jpg"
+		},
+		{
+			"name": "water_png",
+			"type": "image",
+			"url": "assets/water.png"
+		},
+		{
+			"name": "a1_png",
+			"type": "image",
+			"url": "assets/a1.png"
+		},
+		{
+			"name": "a2_png",
+			"type": "image",
+			"url": "assets/a2.png"
+		},
+		{
+			"name": "a3_png",
+			"type": "image",
+			"url": "assets/a3.png"
+		},
+		{
+			"name": "a4_png",
+			"type": "image",
+			"url": "assets/a4.png"
+		},
+		{
+			"name": "b1_png",
+			"type": "image",
+			"url": "assets/b1.png"
+		},
+		{
+			"name": "b2_png",
+			"type": "image",
+			"url": "assets/b2.png"
+		},
+		{
+			"name": "b3_png",
+			"type": "image",
+			"url": "assets/b3.png"
+		},
+		{
+			"name": "b4_png",
+			"type": "image",
+			"url": "assets/b4.png"
+		},
+		{
+			"name": "b5_png",
+			"type": "image",
+			"url": "assets/b5.png"
+		}
+	]
+}
