@@ -118,73 +118,74 @@ class Main extends egret.DisplayObjectContainer {
     private createGameScene():void {
         var stageW:number = this.stage.stageWidth;
         var stageH:number = this.stage.stageHeight;
-        var speedX=0.5;
-        var speedY=0.5;
-        var time_first:number=egret.getTimer();
-        var TargetX:number;
-        var TargetY:number;
-        var firstTouch=true;
         
         
-        var sky:egret.Bitmap = this.createBitmapByName("bj_jpg");
-        this.addChild(sky);
-        
-        sky.x=0;
-        sky.y=0;
-        sky.height = stageH;
+        var newMap:MainMap=new MainMap();
+        newMap.x=0;
+        newMap.y=0;
+        this.addChild(newMap);
 
         var Character:Player=new Player();
         Character.x=0;
-        let CurrentX=Character.x;
-        var firstX:number=0;
-        Character.y=stageH/2;
-        var firstY:number=stageH/2;
-        let CurrentY=Character.y;
+        Character.y=0;
         this.addChild(Character);
 
-        this.touchEnabled=true;
+        var taskService:TaskService=TaskService.getInstance();
+
+        var task_0:Task=new Task("task_0","npc_0","npc_1",Task.ACCEPTABLE,new NPCTalkTaskCondition(),1,"null","task_1");
+
+        var task_1:Task=new Task("task_1","npc_1","npc_1",Task.UNACCEPTALBE,new KillMonsterTaskCondition(),10,"pig_png","null");
+
+        var taskPanel:TaskPanel=new TaskPanel();
+        taskPanel.x=640;
+        taskPanel.y=0;
+        this.addChild(taskPanel);
+
+        var monsterButton:MonsterButton=new MonsterButton("pig_png");
+        monsterButton.x=640;
+        monsterButton.y=500;
+        this.addChild(monsterButton);
+
+        var dialogPanel:DialogPanel=DialogPanel.getInstance();
+        dialogPanel.x=200;
+        dialogPanel.y=200;
+        this.addChild(dialogPanel);
+        dialogPanel.visible=false;
+
+        var npc_0:NPC=new NPC("npc_0","npc_0_png");
+        npc_0.x=128;
+        npc_0.y=128;
+        this.addChild(npc_0);
+
+        var npc_1:NPC=new NPC("npc_1","npc_1_png");
+        npc_1.x=576;
+        npc_1.y=576;
+        this.addChild(npc_1);
+        
         this.addEventListener(egret.TouchEvent.TOUCH_TAP,(evt:egret.TouchEvent)=>{
-            TargetX = evt.stageX;
-            TargetY = evt.stageY;
-            Character.Macine.ChangeState(new MoveState(Character.MyPlayer));
-            if (!firstTouch) {
-                
-                    egret.Tween.removeTweens(Character);
-                    egret.Tween.get(Character).to({ x: TargetX, y: TargetY }, 1000).call(() => {
-                        Character.Macine.ChangeState(new IdleState(Character.MyPlayer));
-                    });
-                
-            } else {
-                firstTouch = false;
-                
-                
-                egret.Tween.get(Character).to({ x: TargetX, y: TargetY },1000).call(()=>{
-                    Character.Macine.ChangeState(new IdleState(Character.MyPlayer));
-                });
+            let startTile: tile = new tile();
+            startTile.x = Math.floor(Character.x / ONETILESIZE);
+            startTile.y = Math.floor(Character.y / ONETILESIZE);
+            let endTile: tile = new tile();
+            endTile.x = Math.floor(evt.stageX / ONETILESIZE);
+            endTile.y = Math.floor(evt.stageY / ONETILESIZE);
+            // console.log("start:("+startTile.x+","+startTile.y+")"+"end:("+endTile.x+","+endTile.y+")");
+            if(newMap.findWay(startTile,endTile)){
+                let path:tile[]=newMap.getPath();
+                Character.Macine.ChangeState(new MoveState(Character,path));
             }
-            
-            /*if(sky.x<0 &&sky.x>stageW-sky.width){
-                egret.Tween.get(sky).to({x:sky.x-dx},500);
-            }else if(sky.x>=0 &&dx>=0){
-                egret.Tween.get(sky).to({x:sky.x-dx},500);
-            }else if(sky.x<=stageW-sky.width && dx<0){
-                egret.Tween.get(sky).to({x:sky.x-dx},500);
-            }
-            Character.Macine.ChangeState(new MoveState(Character.MyPlayer));
-            egret.Tween.get(Character).to({x:Character.x+dx,y:Character.y+dy},2000).call(()=>{
-                Character.Macine.ChangeState(new IdleState(Character.MyPlayer));
-            });
-            CurrentX=Character.x+dx;
-            CurrentY=Character.y+dy;*/
+        }, this)
 
-        },this)
+        var user:User=new User();
+        var hero:Hero=new Hero();
+        var equipment:Equipment=new Equipment();
+        var jewll:Jewll=new Jewll();
+        equipment.addJewll(jewll);
+        hero.addEquipment(equipment);
+        user.addHero(hero);
+        user.getFightPower();
+        user.getFightPower();
 
-    }
-    private createBitmapByName(name: string): egret.Bitmap {
-        var result = new egret.Bitmap();
-        var texture: egret.Texture = RES.getRes(name);
-        result.texture = texture;
-        return result;
     }
 }
 

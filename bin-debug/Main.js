@@ -103,62 +103,60 @@ var Main = (function (_super) {
     p.createGameScene = function () {
         var stageW = this.stage.stageWidth;
         var stageH = this.stage.stageHeight;
-        var speedX = 0.5;
-        var speedY = 0.5;
-        var time_first = egret.getTimer();
-        var TargetX;
-        var TargetY;
-        var firstTouch = true;
-        var sky = this.createBitmapByName("bj_jpg");
-        this.addChild(sky);
-        sky.x = 0;
-        sky.y = 0;
-        sky.height = stageH;
+        var newMap = new MainMap();
+        newMap.x = 0;
+        newMap.y = 0;
+        this.addChild(newMap);
         var Character = new Player();
         Character.x = 0;
-        var CurrentX = Character.x;
-        var firstX = 0;
-        Character.y = stageH / 2;
-        var firstY = stageH / 2;
-        var CurrentY = Character.y;
+        Character.y = 0;
         this.addChild(Character);
-        this.touchEnabled = true;
+        var taskService = TaskService.getInstance();
+        var task_0 = new Task("task_0", "npc_0", "npc_1", Task.ACCEPTABLE, new NPCTalkTaskCondition(), 1, "null", "task_1");
+        var task_1 = new Task("task_1", "npc_1", "npc_1", Task.UNACCEPTALBE, new KillMonsterTaskCondition(), 10, "pig_png", "null");
+        var taskPanel = new TaskPanel();
+        taskPanel.x = 640;
+        taskPanel.y = 0;
+        this.addChild(taskPanel);
+        var monsterButton = new MonsterButton("pig_png");
+        monsterButton.x = 640;
+        monsterButton.y = 500;
+        this.addChild(monsterButton);
+        var dialogPanel = DialogPanel.getInstance();
+        dialogPanel.x = 200;
+        dialogPanel.y = 200;
+        this.addChild(dialogPanel);
+        dialogPanel.visible = false;
+        var npc_0 = new NPC("npc_0", "npc_0_png");
+        npc_0.x = 128;
+        npc_0.y = 128;
+        this.addChild(npc_0);
+        var npc_1 = new NPC("npc_1", "npc_1_png");
+        npc_1.x = 576;
+        npc_1.y = 576;
+        this.addChild(npc_1);
         this.addEventListener(egret.TouchEvent.TOUCH_TAP, function (evt) {
-            TargetX = evt.stageX;
-            TargetY = evt.stageY;
-            Character.Macine.ChangeState(new MoveState(Character.MyPlayer));
-            if (!firstTouch) {
-                egret.Tween.removeTweens(Character);
-                egret.Tween.get(Character).to({ x: TargetX, y: TargetY }, 1000).call(function () {
-                    Character.Macine.ChangeState(new IdleState(Character.MyPlayer));
-                });
+            var startTile = new tile();
+            startTile.x = Math.floor(Character.x / ONETILESIZE);
+            startTile.y = Math.floor(Character.y / ONETILESIZE);
+            var endTile = new tile();
+            endTile.x = Math.floor(evt.stageX / ONETILESIZE);
+            endTile.y = Math.floor(evt.stageY / ONETILESIZE);
+            // console.log("start:("+startTile.x+","+startTile.y+")"+"end:("+endTile.x+","+endTile.y+")");
+            if (newMap.findWay(startTile, endTile)) {
+                var path = newMap.getPath();
+                Character.Macine.ChangeState(new MoveState(Character, path));
             }
-            else {
-                firstTouch = false;
-                egret.Tween.get(Character).to({ x: TargetX, y: TargetY }, 1000).call(function () {
-                    Character.Macine.ChangeState(new IdleState(Character.MyPlayer));
-                });
-            }
-            /*if(sky.x<0 &&sky.x>stageW-sky.width){
-                egret.Tween.get(sky).to({x:sky.x-dx},500);
-            }else if(sky.x>=0 &&dx>=0){
-                egret.Tween.get(sky).to({x:sky.x-dx},500);
-            }else if(sky.x<=stageW-sky.width && dx<0){
-                egret.Tween.get(sky).to({x:sky.x-dx},500);
-            }
-            Character.Macine.ChangeState(new MoveState(Character.MyPlayer));
-            egret.Tween.get(Character).to({x:Character.x+dx,y:Character.y+dy},2000).call(()=>{
-                Character.Macine.ChangeState(new IdleState(Character.MyPlayer));
-            });
-            CurrentX=Character.x+dx;
-            CurrentY=Character.y+dy;*/
         }, this);
-    };
-    p.createBitmapByName = function (name) {
-        var result = new egret.Bitmap();
-        var texture = RES.getRes(name);
-        result.texture = texture;
-        return result;
+        var user = new User();
+        var hero = new Hero();
+        var equipment = new Equipment();
+        var jewll = new Jewll();
+        equipment.addJewll(jewll);
+        hero.addEquipment(equipment);
+        user.addHero(hero);
+        user.getFightPower();
+        user.getFightPower();
     };
     return Main;
 }(egret.DisplayObjectContainer));
